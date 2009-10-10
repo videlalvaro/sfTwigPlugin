@@ -8,6 +8,7 @@ Create a file named `module.yml` in `project/config` or `app/config` dir with th
     
     all:
         view_class: sfTwig
+        partial_view_class: sfTwig
 
 This will enable the sfTwigView class to be used when rendering templates.
 
