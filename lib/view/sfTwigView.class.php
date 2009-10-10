@@ -19,8 +19,9 @@
 class sfTwigView extends sfPHPView
 {
     protected
-        $twig       = null,
-        $extension  = '.html';
+        $twig           = null,
+        $twig_loaders   = array('decorator' => null, 'module' => null),
+        $extension      = '.html';
     
     /**
      * Sets up a Twig_Environment
@@ -29,8 +30,42 @@ class sfTwigView extends sfPHPView
      */
     public function execute()
     {
-        $loader = new Twig_Loader_Filesystem('/', false, sfConfig::get('sf_twig_template_cache', false));
-        $this->twig = new Twig_Environment($loader);
+        //Set up the decorator loader and set up the module loader
+        $configuration = $this->context->getConfiguration();
+        
+        //sets up a Twig_Loader_Array with directories
+        $this->twig_loaders['decorator']    = new Twig_Loader_FileSystem($this->getDecoratorDirectory(), null);
+        $this->twig_loaders['module']       = new Twig_Loader_FileSystem($this->getDirectory(), null);
+        
+        //Setting the $loader to null lets us swap the loader out as we need it on the same instance.
+        $this->twig = new Twig_Environment(null);
+    }
+    
+    
+    /**
+     * Renders the content
+     *
+     * @return string
+     */
+    public function render()
+    {
+        //Content holder
+        $content = null;
+        
+        //No cache
+        if (is_null($content)) {
+            // execute pre-render check
+            $this->preRenderCheck();
+            
+            $content = $this->renderTemplate('module');
+        }
+        
+        //Two step rendering so decorate if needed
+        if ($this->isDecorator()) {
+            $content = $this->renderTemplate('decorator', $content);
+        }
+    
+        return $content;
     }
     
     /**
@@ -43,17 +78,31 @@ class sfTwigView extends sfPHPView
         return $this->twig;
     }
     
-    /**
-     * Renders a Twig_Template
-     *
-     * @oaram $_sfFile string fullpath to a template file
-     * @return string the rendered file
-     */
-    protected function renderFile($_sfFile)
+    protected function renderTemplate($loader_type, $content = null)
     {
+        //Must be availible even tho Twig cant support calling them
         $this->loadCoreAndStandardHelpers();
-    
-        $template = $this->twig->loadTemplate(substr($_sfFile, 1));
-        return $template->render($this->attributeHolder->toArray());
+        
+        switch ($loader_type) {
+            case 'decorator':
+                $attributeHolder = clone $this->attributeHolder;
+                $this->attributeHolder = $this->initializeAttributeHolder(array('sf_content' => new sfOutputEscaperSafe($content)));
+                $this->attributeHolder->set('sf_type', 'layout');
+                
+                $this->twig->setLoader($this->twig_loaders['decorator']);
+                $content = $this->twig->loadTemplate($this->getDecoratorTemplate())->render($this->attributeHolder->toArray());
+                
+                $this->attributeHolder = $attributeHolder;
+                unset($attributeHolder);
+                break;
+            case 'module':
+            default:
+                $this->attributeHolder->set('sf_type', 'action');
+                $this->twig->setLoader($this->twig_loaders['module']);
+                $content = $this->twig->loadTemplate($this->getTemplate())->render($this->attributeHolder->toArray());
+                break;
+        }
+        
+        return $content;
     }
 }

@@ -1,10 +1,10 @@
 sfTwigPlugin
 ============
-This plugin tries to integrate the [Twig template engine](http://twig-project.com) into [Symfony](http://symfony-project.org)
+This plugin tries to integrate the [Twig](http://twig-project.com) into [Symfony](http://symfony-project.org)
 
 Install
 -------
-Create a file named `module.yml` in `project/config` or `app/config` dir with the following content.
+Create a file named `module.yml` in project/`config` or app/`config` dir with the following content.
     
     all:
         view_class: sfTwig
