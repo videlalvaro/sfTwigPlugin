@@ -24,14 +24,17 @@ class sfTwigView extends sfPHPView
         $extension      = '.html';
     
     /**
-     * Sets up a Twig_Environment
+     * Initializes this view.
      *
-     * @return void
+     * @param  sfContext $context     The current application context
+     * @param  string    $moduleName  The module name for this view
+     * @param  string    $actionName  The action name for this view
+     * @param  string    $viewName    The view name
+     * @return bool  true, if initialization completes successfully, otherwise false
      */
-    public function execute()
+    public function initialize($context, $moduleName, $actionName, $viewName)
     {
-        //Set up the decorator loader and set up the module loader
-        $configuration = $this->context->getConfiguration();
+        parent::initialize($context, $moduleName, $actionName, $viewName);
         
         //sets up a Twig_Loader_Array with directories
         $this->twig_loaders['decorator']    = new Twig_Loader_FileSystem($this->getDecoratorDirectory(), sfConfig::get('sf_template_cache_dir'));
@@ -40,7 +43,6 @@ class sfTwigView extends sfPHPView
         //Setting the $loader to null lets us swap the loader out as we need it on the same instance.
         $this->twig = new Twig_Environment(null);
     }
-    
     
     /**
      * Renders the content
@@ -78,6 +80,13 @@ class sfTwigView extends sfPHPView
         return $this->twig;
     }
     
+    /**
+     * Renders a Twig_Template based on $loader_type
+     *
+     * @param string $loader_type this can be decorator or module
+     * @param string $content Content to be decorated if the $loader_type is decorator
+     * @returns string a rendered Twig_Template
+     */
     protected function renderTemplate($loader_type, $content = null)
     {
         //Must be availible even tho Twig cant support calling them
