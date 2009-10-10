@@ -34,8 +34,8 @@ class sfTwigView extends sfPHPView
         $configuration = $this->context->getConfiguration();
         
         //sets up a Twig_Loader_Array with directories
-        $this->twig_loaders['decorator']    = new Twig_Loader_FileSystem($this->getDecoratorDirectory(), null);
-        $this->twig_loaders['module']       = new Twig_Loader_FileSystem($this->getDirectory(), null);
+        $this->twig_loaders['decorator']    = new Twig_Loader_FileSystem($this->getDecoratorDirectory(), sfConfig::get('sf_template_cache_dir'));
+        $this->twig_loaders['module']       = new Twig_Loader_FileSystem($this->getDirectory(), sfConfig::get('sf_template_cache_dir'));
         
         //Setting the $loader to null lets us swap the loader out as we need it on the same instance.
         $this->twig = new Twig_Environment(null);
