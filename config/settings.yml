@@ -1,0 +1,11 @@
+prod:
+  .settings:
+    twig_template_cache:    true
+    
+dev:
+  .settings:
+    twig_template_cache:    false
+    
+test:
+  .settings:
+    twig_template_cache:    false
