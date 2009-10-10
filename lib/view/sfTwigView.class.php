@@ -29,7 +29,7 @@ class sfTwigView extends sfPHPView
      */
     public function execute()
     {
-        $loader = new Twig_Loader_Filesystem('/', sfConfig::get('sf_app_cache_dir') . '/twig', sfConfig::get('sf_twig_template_cache', false));
+        $loader = new Twig_Loader_Filesystem('/', false, sfConfig::get('sf_twig_template_cache', false));
         $this->twig = new Twig_Environment($loader);
     }
     
