@@ -26,11 +26,11 @@ sfPHPView and Twig dosent allow function calling from within the templates none 
 
 To Generate the port of symfony helpers into Twig Extensions do the following:
 
-  cd ./plugins/sfTwigPlugin
-  ./helpers.sh /path/to/syfmony/lib/helper/
+    ./symfony twig:helpers
   
-This script will scan the symfony helper folder (Or any folder with files ending with Helper.php) and with create Twig Extensions based on them inside the ./lib/extensions folder of the plugin. sed, awk & php must be in the path.
+This script will scan the symfony helper folder and with create Twig Extensions based on them inside the ./lib/extensions folder of the plugin. 
+sed, awk & php must be in the path.
 
 Then in order to use the UrlHelper with Twig you can do:
   
-  $twig->addExtension(new Url_Twig_Extension());
+    $twig->addExtension(new Url_Twig_Extension());
